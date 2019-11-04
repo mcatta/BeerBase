@@ -2,8 +2,7 @@ package dev.marcocattaneo.beerbase.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import dev.marcocattaneo.beerbase.CoroutinesTestRule
-import dev.marcocattaneo.beerbase.data.GithubService
-import dev.marcocattaneo.beerbase.utils.LiveDataResult
+import dev.marcocattaneo.beerbase.data.BeerRepository
 import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -28,22 +27,22 @@ class MainViewModelTest {
     lateinit var mainViewModel: MainViewModel
 
     @RelaxedMockK
-    lateinit var service: GithubService
+    lateinit var beerRepository: BeerRepository
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        mainViewModel = MainViewModel(service)
+        mainViewModel = MainViewModel(beerRepository)
     }
 
     @Test
     fun testSuccessfullyRequest() = coroutinesTestRule.testDispatcher.runBlockingTest {
-        mainViewModel.fetchResult.observeForever {  }
-        coEvery{ service.fetchRepositories(any()) } returns listOf()
+        mainViewModel.fetchResult.observeForever { }
+        coEvery { beerRepository.searchBeer(any()) } returns listOf()
 
         assertNull(mainViewModel.fetchResult.value)
 
-        mainViewModel.fetch()
+        mainViewModel.searchBeer("beer")
 
         assertNotNull(mainViewModel.fetchResult.value)
         assertEquals(mainViewModel.fetchResult.value?.status, LiveDataResultStatus.SUCCESS)

@@ -10,6 +10,7 @@ import dev.marcocattaneo.beerbase.ui.main.di.MainActivityModule
 
 @Module
 abstract class ActivityBuilder {
+
     @ContributesAndroidInjector(modules = [MainActivityModule::class])
     internal abstract fun bindMainActivity(): MainActivity?
 

@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dagger.android.AndroidInjection
 import dev.marcocattaneo.beerbase.R
@@ -23,6 +25,17 @@ class MainActivity : BaseActivity() {
 
     @Inject
     lateinit var daggerAndroidViewModelFactory: DaggerViewModelFactory
+
+    private val diffUtil = object: DiffUtil.ItemCallback<BeerModel>() {
+        override fun areItemsTheSame(oldItem: BeerModel, newItem: BeerModel): Boolean {
+            return oldItem.fields.id == newItem.fields.id
+        }
+
+        override fun areContentsTheSame(oldItem: BeerModel, newItem: BeerModel): Boolean {
+            return oldItem.fields.id == newItem.fields.id
+        }
+
+    }
 
     private val mainViewModel: MainViewModel by lazy {
         ViewModelProviders.of(
@@ -41,8 +54,7 @@ class MainActivity : BaseActivity() {
     private val observer = Observer<LiveDataResult<List<BeerModel>>> {
         when (it.status) {
             LiveDataResultStatus.LOADING -> {}
-            LiveDataResultStatus.SUCCESS -> (binding.list.adapter as ListAdapter).items =
-                it.data ?: listOf()
+            LiveDataResultStatus.SUCCESS -> (binding.list.adapter as BeersAdapter).submitList(it.data)
             LiveDataResultStatus.ERROR -> {}
         }
 
@@ -55,29 +67,21 @@ class MainActivity : BaseActivity() {
         binding.list.apply {
             layoutManager =
                 LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
-            adapter = ListAdapter()
+            adapter = BeersAdapter(diffUtil)
         }
 
         mainViewModel.fetchResult.observe(this, this.observer)
 
-        mainViewModel.fetch()
+        mainViewModel.searchBeer("punk ipa")
     }
 
-    class ListAdapter : RecyclerView.Adapter<ListAdapter.ListItemViewHolder>() {
-
-        var items: List<BeerModel> = listOf()
+    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerModel>) : ListAdapter<BeerModel, BeersAdapter.ListItemViewHolder>(diffUtilCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ListItemViewHolder(
             AdapterListRowBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
-
-        override fun getItemCount() = items.size
-
-        override fun onBindViewHolder(holder: ListItemViewHolder, position: Int) {
-            holder.bind(items[position].id)
-        }
 
         inner class ListItemViewHolder(val adapterListRowBinding: AdapterListRowBinding) :
             RecyclerView.ViewHolder(adapterListRowBinding.root) {
@@ -86,6 +90,10 @@ class MainActivity : BaseActivity() {
                 this.adapterListRowBinding.title.text = value
             }
 
+        }
+
+        override fun onBindViewHolder(holder: ListItemViewHolder, position: Int) {
+            holder.bind(getItem(position).fields.name)
         }
     }
 }
