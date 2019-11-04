@@ -10,12 +10,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.AndroidInjection
 import dev.marcocattaneo.beerbase.R
 import dev.marcocattaneo.beerbase.databinding.ActivityMainBinding
 import dev.marcocattaneo.beerbase.databinding.AdapterListRowBinding
 import dev.marcocattaneo.beerbase.model.BeerModel
 import dev.marcocattaneo.beerbase.ui.BaseActivity
+import dev.marcocattaneo.beerbase.ui.utils.ListDecorator
 import dev.marcocattaneo.beerbase.utils.DaggerViewModelFactory
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
 import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
@@ -26,7 +28,7 @@ class MainActivity : BaseActivity() {
     @Inject
     lateinit var daggerAndroidViewModelFactory: DaggerViewModelFactory
 
-    private val diffUtil = object: DiffUtil.ItemCallback<BeerModel>() {
+    private val diffUtil = object : DiffUtil.ItemCallback<BeerModel>() {
         override fun areItemsTheSame(oldItem: BeerModel, newItem: BeerModel): Boolean {
             return oldItem.fields.id == newItem.fields.id
         }
@@ -53,9 +55,17 @@ class MainActivity : BaseActivity() {
 
     private val observer = Observer<LiveDataResult<List<BeerModel>>> {
         when (it.status) {
-            LiveDataResultStatus.LOADING -> {}
-            LiveDataResultStatus.SUCCESS -> (binding.list.adapter as BeersAdapter).submitList(it.data)
-            LiveDataResultStatus.ERROR -> {}
+            LiveDataResultStatus.LOADING -> {
+                binding.swipeToRefresh.isRefreshing = true
+            }
+            LiveDataResultStatus.SUCCESS -> {
+                binding.swipeToRefresh.isRefreshing = false
+                (binding.list.adapter as BeersAdapter).submitList(it.data)
+            }
+            LiveDataResultStatus.ERROR -> {
+                binding.swipeToRefresh.isRefreshing = false
+                showSnackbar(it.err?.message)
+            }
         }
 
     }
@@ -64,18 +74,31 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
 
-        binding.list.apply {
-            layoutManager =
-                LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
-            adapter = BeersAdapter(diffUtil)
-        }
+        initUI()
 
         mainViewModel.fetchResult.observe(this, this.observer)
 
         mainViewModel.searchBeer("punk ipa")
     }
 
-    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerModel>) : ListAdapter<BeerModel, BeersAdapter.ListItemViewHolder>(diffUtilCallback) {
+    private fun showSnackbar(message: String?) {
+        message?.let {
+            Snackbar.make(this.binding.container, it, Snackbar.LENGTH_LONG).show()
+        }
+    }
+
+    private fun initUI() {
+        binding.list.apply {
+            layoutManager =
+                LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(ListDecorator(resources.getDimensionPixelSize(R.dimen.recycler_view_spacing)))
+            adapter = BeersAdapter(diffUtil)
+        }
+        binding.swipeToRefresh.setOnRefreshListener { mainViewModel.searchBeer("punk ipa") }
+    }
+
+    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerModel>) :
+        ListAdapter<BeerModel, BeersAdapter.ListItemViewHolder>(diffUtilCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ListItemViewHolder(
             AdapterListRowBinding.inflate(

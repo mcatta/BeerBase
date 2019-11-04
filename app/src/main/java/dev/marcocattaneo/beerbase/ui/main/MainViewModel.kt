@@ -16,6 +16,7 @@ class MainViewModel @Inject constructor(private val beerRepository: BeerReposito
     val fetchResult = MutableLiveData<LiveDataResult<List<BeerModel>>>()
 
     fun searchBeer(query: String) {
+        fetchResult.value = LiveDataResult.loading()
         viewModelScope.launch {
 
             try {
