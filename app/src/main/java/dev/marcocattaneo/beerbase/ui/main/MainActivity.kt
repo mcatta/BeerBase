@@ -15,6 +15,8 @@ import dev.marcocattaneo.beerbase.databinding.AdapterListRowBinding
 import dev.marcocattaneo.beerbase.model.BeerModel
 import dev.marcocattaneo.beerbase.ui.BaseActivity
 import dev.marcocattaneo.beerbase.utils.DaggerViewModelFactory
+import dev.marcocattaneo.beerbase.utils.LiveDataResult
+import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -29,10 +31,21 @@ class MainActivity : BaseActivity() {
         ).get(MainViewModel::class.java)
     }
 
-    private val binding: ActivityMainBinding by lazy { DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main) }
+    private val binding: ActivityMainBinding by lazy {
+        DataBindingUtil.setContentView<ActivityMainBinding>(
+            this,
+            R.layout.activity_main
+        )
+    }
 
-    private val observer = Observer<List<BeerModel>> {
-        (binding.list.adapter as ListAdapter).items = it
+    private val observer = Observer<LiveDataResult<List<BeerModel>>> {
+        when (it.status) {
+            LiveDataResultStatus.LOADING -> {}
+            LiveDataResultStatus.SUCCESS -> (binding.list.adapter as ListAdapter).items =
+                it.data ?: listOf()
+            LiveDataResultStatus.ERROR -> {}
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +53,8 @@ class MainActivity : BaseActivity() {
         AndroidInjection.inject(this)
 
         binding.list.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+            layoutManager =
+                LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
             adapter = ListAdapter()
         }
 
@@ -49,12 +63,15 @@ class MainActivity : BaseActivity() {
         mainViewModel.fetch()
     }
 
-    class ListAdapter: RecyclerView.Adapter<ListAdapter.ListItemViewHolder>() {
+    class ListAdapter : RecyclerView.Adapter<ListAdapter.ListItemViewHolder>() {
 
         var items: List<BeerModel> = listOf()
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ListItemViewHolder(AdapterListRowBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false))
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ListItemViewHolder(
+            AdapterListRowBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        )
 
         override fun getItemCount() = items.size
 
@@ -62,7 +79,8 @@ class MainActivity : BaseActivity() {
             holder.bind(items[position].id)
         }
 
-        inner class ListItemViewHolder(val adapterListRowBinding: AdapterListRowBinding): RecyclerView.ViewHolder(adapterListRowBinding.root) {
+        inner class ListItemViewHolder(val adapterListRowBinding: AdapterListRowBinding) :
+            RecyclerView.ViewHolder(adapterListRowBinding.root) {
 
             fun bind(value: String) {
                 this.adapterListRowBinding.title.text = value
