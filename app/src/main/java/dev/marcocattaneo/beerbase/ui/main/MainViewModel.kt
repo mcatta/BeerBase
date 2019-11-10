@@ -9,6 +9,7 @@ import dev.marcocattaneo.beerbase.utils.LiveDataResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.lang.NullPointerException
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(private val beerRepository: BeerRepository) : ViewModel() {
@@ -19,17 +20,25 @@ class MainViewModel @Inject constructor(private val beerRepository: BeerReposito
         fetchResult.value = LiveDataResult.loading()
         viewModelScope.launch {
 
-            try {
-                val data = async(Dispatchers.Default) {
+            val data = async(Dispatchers.Default) {
+                try {
                     this@MainViewModel.beerRepository.searchBeer(query)
-                }.await()
+                } catch (e: Exception) {
+                    null
+                }
+            }.await()
 
+            data?.let {
                 fetchResult.value = LiveDataResult.success(data)
-            } catch (e: Exception) {
-                fetchResult.value = LiveDataResult.error(e)
+            } ?: run {
+                fetchResult.value = LiveDataResult.error(NullPointerException())
             }
 
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
     }
 
 }
