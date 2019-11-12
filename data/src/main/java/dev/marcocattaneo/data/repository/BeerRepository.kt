@@ -1,6 +1,6 @@
-package dev.marcocattaneo.beerbase.data
+package dev.marcocattaneo.data.repository
 
-import dev.marcocattaneo.beerbase.model.BeerModel
+import dev.marcocattaneo.data.model.BeerModel
 import javax.inject.Inject
 
 class BeerRepository @Inject constructor(

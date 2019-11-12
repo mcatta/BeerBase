@@ -6,12 +6,10 @@ import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import dagger.android.support.AndroidSupportInjectionModule
 import dev.marcocattaneo.beerbase.BeerApplication
-import dev.marcocattaneo.beerbase.di.modules.ActivitiesModule
 import dev.marcocattaneo.beerbase.di.modules.ActivityBuilder
 import dev.marcocattaneo.beerbase.di.modules.DaggerViewModelFactoryModule
-import dev.marcocattaneo.beerbase.di.modules.RetrofitModule
+import dev.marcocattaneo.data.di.RetrofitModule
 import javax.inject.Singleton
-
 
 @Singleton
 @Component(modules = [

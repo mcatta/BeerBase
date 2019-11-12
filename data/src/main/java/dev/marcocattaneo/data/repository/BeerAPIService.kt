@@ -1,6 +1,6 @@
-package dev.marcocattaneo.beerbase.data
+package dev.marcocattaneo.data.repository
 
-import dev.marcocattaneo.beerbase.model.BeerResponse
+import dev.marcocattaneo.data.model.BeerResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

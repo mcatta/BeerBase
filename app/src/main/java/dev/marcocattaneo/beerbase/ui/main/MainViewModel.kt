@@ -3,9 +3,9 @@ package dev.marcocattaneo.beerbase.ui.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.marcocattaneo.beerbase.data.BeerRepository
-import dev.marcocattaneo.beerbase.model.BeerModel
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
+import dev.marcocattaneo.data.model.BeerModel
+import dev.marcocattaneo.data.repository.BeerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

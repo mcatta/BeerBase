@@ -1,8 +1,8 @@
-package dev.marcocattaneo.beerbase.di.modules
+package dev.marcocattaneo.data.di
 
 import dagger.Module
 import dagger.Provides
-import dev.marcocattaneo.beerbase.data.BeerAPIService
+import dev.marcocattaneo.data.repository.BeerAPIService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -19,6 +19,6 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideBeerAPIService(retrofit: Retrofit) = retrofit.create<BeerAPIService>(BeerAPIService::class.java)
+    internal fun provideBeerAPIService(retrofit: Retrofit) = retrofit.create<BeerAPIService>(BeerAPIService::class.java)
 
 }

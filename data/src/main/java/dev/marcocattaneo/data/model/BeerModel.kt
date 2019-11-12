@@ -1,4 +1,4 @@
-package dev.marcocattaneo.beerbase.model
+package dev.marcocattaneo.data.model
 
 import com.google.gson.annotations.SerializedName
 

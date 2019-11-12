@@ -2,7 +2,7 @@ package dev.marcocattaneo.beerbase.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import dev.marcocattaneo.beerbase.CoroutinesTestRule
-import dev.marcocattaneo.beerbase.data.BeerRepository
+import dev.marcocattaneo.data.repository.BeerRepository
 import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -28,7 +28,7 @@ class MainViewModelTest {
     lateinit var mainViewModel: MainViewModel
 
     @RelaxedMockK
-    lateinit var beerRepository: BeerRepository
+    lateinit var beerRepository: dev.marcocattaneo.data.repository.BeerRepository
 
     @Before
     fun setUp() {
