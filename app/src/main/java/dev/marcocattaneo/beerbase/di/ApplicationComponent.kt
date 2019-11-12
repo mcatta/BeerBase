@@ -7,6 +7,7 @@ import dagger.android.DaggerApplication
 import dagger.android.support.AndroidSupportInjectionModule
 import dev.marcocattaneo.beerbase.BeerApplication
 import dev.marcocattaneo.beerbase.di.modules.ActivityBuilder
+import dev.marcocattaneo.beerbase.di.modules.CoroutineModule
 import dev.marcocattaneo.beerbase.di.modules.DaggerViewModelFactoryModule
 import dev.marcocattaneo.data.di.RetrofitModule
 import javax.inject.Singleton
@@ -16,7 +17,8 @@ import javax.inject.Singleton
     AndroidSupportInjectionModule::class,
     ActivityBuilder::class,
     DaggerViewModelFactoryModule::class,
-    RetrofitModule::class
+    RetrofitModule::class,
+    CoroutineModule::class
 ])
 interface ApplicationComponent : AndroidInjector<DaggerApplication> {
 

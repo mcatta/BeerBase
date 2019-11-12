@@ -2,9 +2,6 @@ package dev.marcocattaneo.data.model
 
 import com.google.gson.annotations.SerializedName
 
-/**
-     *
- */
 data class BeerModel(
     @SerializedName("datasetid") val datasetid : String,
     @SerializedName("recordid") val recordid : String,

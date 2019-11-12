@@ -6,13 +6,16 @@ import androidx.lifecycle.viewModelScope
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
 import dev.marcocattaneo.data.model.BeerModel
 import dev.marcocattaneo.data.repository.BeerRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.lang.NullPointerException
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(private val beerRepository: BeerRepository) : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val beerRepository: BeerRepository,
+    private val coroutineDispatcher: CoroutineDispatcher
+) : ViewModel() {
 
     val fetchResult = MutableLiveData<LiveDataResult<List<BeerModel>>>()
 
@@ -20,13 +23,13 @@ class MainViewModel @Inject constructor(private val beerRepository: BeerReposito
         fetchResult.value = LiveDataResult.loading()
         viewModelScope.launch {
 
-            val data = async(Dispatchers.Default) {
+            val data = withContext(coroutineDispatcher) {
                 try {
                     this@MainViewModel.beerRepository.searchBeer(query)
                 } catch (e: Exception) {
                     null
                 }
-            }.await()
+            }
 
             data?.let {
                 fetchResult.value = LiveDataResult.success(data)

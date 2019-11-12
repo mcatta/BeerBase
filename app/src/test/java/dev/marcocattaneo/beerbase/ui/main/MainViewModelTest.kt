@@ -28,12 +28,12 @@ class MainViewModelTest {
     lateinit var mainViewModel: MainViewModel
 
     @RelaxedMockK
-    lateinit var beerRepository: dev.marcocattaneo.data.repository.BeerRepository
+    lateinit var beerRepository: BeerRepository
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        mainViewModel = MainViewModel(beerRepository)
+        mainViewModel = MainViewModel(beerRepository, this.coroutinesTestRule.testDispatcher)
     }
 
     @Test

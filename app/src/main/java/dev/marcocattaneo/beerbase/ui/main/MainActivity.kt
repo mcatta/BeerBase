@@ -28,12 +28,12 @@ class MainActivity : BaseActivity() {
     @Inject
     lateinit var daggerAndroidViewModelFactory: DaggerViewModelFactory
 
-    private val diffUtil = object : DiffUtil.ItemCallback<dev.marcocattaneo.data.model.BeerModel>() {
-        override fun areItemsTheSame(oldItem: dev.marcocattaneo.data.model.BeerModel, newItem: dev.marcocattaneo.data.model.BeerModel): Boolean {
+    private val diffUtil = object : DiffUtil.ItemCallback<BeerModel>() {
+        override fun areItemsTheSame(oldItem: BeerModel, newItem: BeerModel): Boolean {
             return oldItem.fields.id == newItem.fields.id
         }
 
-        override fun areContentsTheSame(oldItem: dev.marcocattaneo.data.model.BeerModel, newItem: dev.marcocattaneo.data.model.BeerModel): Boolean {
+        override fun areContentsTheSame(oldItem: BeerModel, newItem: BeerModel): Boolean {
             return oldItem.fields.id == newItem.fields.id
         }
 
@@ -53,7 +53,7 @@ class MainActivity : BaseActivity() {
         )
     }
 
-    private val observer = Observer<LiveDataResult<List<dev.marcocattaneo.data.model.BeerModel>>> {
+    private val observer = Observer<LiveDataResult<List<BeerModel>>> {
         when (it.status) {
             LiveDataResultStatus.LOADING -> {
                 binding.swipeToRefresh.isRefreshing = true
@@ -97,8 +97,8 @@ class MainActivity : BaseActivity() {
         binding.swipeToRefresh.setOnRefreshListener { mainViewModel.searchBeer("punk ipa") }
     }
 
-    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<dev.marcocattaneo.data.model.BeerModel>) :
-        ListAdapter<dev.marcocattaneo.data.model.BeerModel, BeersAdapter.ListItemViewHolder>(diffUtilCallback) {
+    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerModel>) :
+        ListAdapter<BeerModel, BeersAdapter.ListItemViewHolder>(diffUtilCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ListItemViewHolder(
             AdapterListRowBinding.inflate(
