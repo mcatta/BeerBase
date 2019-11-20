@@ -16,8 +16,6 @@ class MainViewModel @Inject constructor(
     private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val job = SupervisorJob()
-
     val fetchResult = MutableLiveData<LiveDataResult<List<BeerModel>>>()
 
     fun searchBeer(query: String) {
@@ -44,11 +42,6 @@ class MainViewModel @Inject constructor(
         } catch (e: Exception) {
             CoroutineResponse.error<List<BeerModel>>(e)
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        job.cancel()
     }
 
 }
