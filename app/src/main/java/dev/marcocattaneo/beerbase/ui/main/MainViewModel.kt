@@ -4,12 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
+import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
 import dev.marcocattaneo.data.model.BeerModel
 import dev.marcocattaneo.data.repository.BeerRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import dev.marcocattaneo.data.utils.CoroutineResponse
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
@@ -17,31 +16,39 @@ class MainViewModel @Inject constructor(
     private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
+    private val job = SupervisorJob()
+
     val fetchResult = MutableLiveData<LiveDataResult<List<BeerModel>>>()
 
     fun searchBeer(query: String) {
-        fetchResult.value = LiveDataResult.loading()
         viewModelScope.launch {
+            fetchResult.value = LiveDataResult.loading()
 
-            val data = withContext(coroutineDispatcher) {
-                try {
-                    this@MainViewModel.beerRepository.searchBeer(query)
-                } catch (e: Exception) {
-                    null
+            val res = loadData(query)
+            when {
+                res.result != null -> {
+                    fetchResult.value = LiveDataResult(LiveDataResultStatus.SUCCESS, res.result)
                 }
-            }
-
-            data?.let {
-                fetchResult.value = LiveDataResult.success(data)
-            } ?: run {
-                fetchResult.value = LiveDataResult.error(NullPointerException())
+                res.error != null -> {
+                    fetchResult.value = LiveDataResult(LiveDataResultStatus.ERROR, res.result, res.error)
+                }
+                else -> {}
             }
 
         }
     }
 
+    private suspend fun loadData(query: String) = withContext(coroutineDispatcher) {
+        try {
+            CoroutineResponse.result(beerRepository.searchBeer(query))
+        } catch (e: Exception) {
+            CoroutineResponse.error<List<BeerModel>>(e)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
+        job.cancel()
     }
 
 }

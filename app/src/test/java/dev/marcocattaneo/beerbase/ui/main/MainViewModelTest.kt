@@ -2,8 +2,8 @@ package dev.marcocattaneo.beerbase.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import dev.marcocattaneo.beerbase.CoroutinesTestRule
-import dev.marcocattaneo.data.repository.BeerRepository
 import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
+import dev.marcocattaneo.data.repository.BeerRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.RelaxedMockK
@@ -14,7 +14,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import java.lang.IllegalStateException
 
 @RunWith(JUnit4::class)
 class MainViewModelTest {
@@ -60,6 +59,25 @@ class MainViewModelTest {
 
         assertNotNull(mainViewModel.fetchResult.value)
         assertEquals(mainViewModel.fetchResult.value?.status, LiveDataResultStatus.ERROR)
+    }
+
+    @Test
+    fun testMixedRequest() = coroutinesTestRule.testDispatcher.runBlockingTest {
+        mainViewModel.fetchResult.observeForever { }
+        coEvery { beerRepository.searchBeer(any()) } coAnswers { throw IllegalStateException() }
+
+        assertNull(mainViewModel.fetchResult.value)
+
+        mainViewModel.searchBeer("beer")
+
+        assertNotNull(mainViewModel.fetchResult.value)
+        assertEquals(mainViewModel.fetchResult.value?.status, LiveDataResultStatus.ERROR)
+
+        coEvery { beerRepository.searchBeer(any()) } returns listOf()
+
+        mainViewModel.searchBeer("beer")
+
+        assertEquals(mainViewModel.fetchResult.value?.status, LiveDataResultStatus.SUCCESS)
     }
 
 }
