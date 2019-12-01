@@ -1,13 +1,13 @@
 package dev.marcocattaneo.beerbase.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import dev.marcocattaneo.beerbase.BaseTest
 import dev.marcocattaneo.beerbase.CoroutinesTestRule
 import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
-import dev.marcocattaneo.data.repository.BeerRepository
+import dev.marcocattaneo.data.repository.BeerRepositoryImpl
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.RelaxedMockK
-import junit.framework.Assert.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
@@ -16,7 +16,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class MainViewModelTest {
+class MainViewModelTest: BaseTest() {
 
     @get:Rule
     var coroutinesTestRule = CoroutinesTestRule()
@@ -27,57 +27,57 @@ class MainViewModelTest {
     lateinit var mainViewModel: MainViewModel
 
     @RelaxedMockK
-    lateinit var beerRepository: BeerRepository
+    lateinit var beerRepositoryImpl: BeerRepositoryImpl
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        mainViewModel = MainViewModel(beerRepository, this.coroutinesTestRule.testDispatcher)
+        mainViewModel = MainViewModel(beerRepositoryImpl, this.coroutinesTestRule.testDispatcher)
     }
 
     @Test
     fun testSuccessfullyRequest() = coroutinesTestRule.testDispatcher.runBlockingTest {
         mainViewModel.fetchResult.observeForever { }
-        coEvery { beerRepository.searchBeer(any()) } returns listOf()
+        coEvery { beerRepositoryImpl.searchBeer(any()) } returns listOf()
 
-        assertNull(mainViewModel.fetchResult.value)
+        isNotNull(mainViewModel.fetchResult.value)
 
         mainViewModel.searchBeer("beer")
 
-        assertNotNull(mainViewModel.fetchResult.value)
-        assertEquals(mainViewModel.fetchResult.value?.status, LiveDataResultStatus.SUCCESS)
+        isNotNull(mainViewModel.fetchResult.value)
+        mainViewModel.fetchResult.value?.status?.isEqualTo(LiveDataResultStatus.SUCCESS)
     }
 
     @Test
     fun testNegativeRequest() = coroutinesTestRule.testDispatcher.runBlockingTest {
         mainViewModel.fetchResult.observeForever { }
-        coEvery { beerRepository.searchBeer(any()) } coAnswers { throw IllegalStateException() }
+        coEvery { beerRepositoryImpl.searchBeer(any()) } coAnswers { throw IllegalStateException() }
 
-        assertNull(mainViewModel.fetchResult.value)
+        isNotNull(mainViewModel.fetchResult.value)
 
         mainViewModel.searchBeer("beer")
 
-        assertNotNull(mainViewModel.fetchResult.value)
-        assertEquals(mainViewModel.fetchResult.value?.status, LiveDataResultStatus.ERROR)
+        isNotNull(mainViewModel.fetchResult.value)
+        mainViewModel.fetchResult.value?.status isEqualTo LiveDataResultStatus.ERROR
     }
 
     @Test
     fun testMixedRequest() = coroutinesTestRule.testDispatcher.runBlockingTest {
         mainViewModel.fetchResult.observeForever { }
-        coEvery { beerRepository.searchBeer(any()) } coAnswers { throw IllegalStateException() }
+        coEvery { beerRepositoryImpl.searchBeer(any()) } coAnswers { throw IllegalStateException() }
 
-        assertNull(mainViewModel.fetchResult.value)
-
-        mainViewModel.searchBeer("beer")
-
-        assertNotNull(mainViewModel.fetchResult.value)
-        assertEquals(mainViewModel.fetchResult.value?.status, LiveDataResultStatus.ERROR)
-
-        coEvery { beerRepository.searchBeer(any()) } returns listOf()
+        isNotNull(mainViewModel.fetchResult.value)
 
         mainViewModel.searchBeer("beer")
 
-        assertEquals(mainViewModel.fetchResult.value?.status, LiveDataResultStatus.SUCCESS)
+        isNotNull(mainViewModel.fetchResult.value)
+        mainViewModel.fetchResult.value?.status isEqualTo LiveDataResultStatus.ERROR
+
+        coEvery { beerRepositoryImpl.searchBeer(any()) } returns listOf()
+
+        mainViewModel.searchBeer("beer")
+
+        mainViewModel.fetchResult.value?.status isEqualTo LiveDataResultStatus.SUCCESS
     }
 
 }

@@ -3,16 +3,17 @@ package dev.marcocattaneo.beerbase.ui.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.marcocattaneo.beerbase.utils.Error
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
 import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
-import dev.marcocattaneo.data.model.BeerModel
-import dev.marcocattaneo.data.repository.BeerRepository
-import dev.marcocattaneo.data.utils.CoroutineResponse
+import dev.marcocattaneo.beerbase.utils.Success
+import dev.marcocattaneo.data.repository.BeerRepositoryImpl
+import dev.marcocattaneo.domain.models.BeerModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val beerRepository: BeerRepository,
+    private val beerRepositoryImpl: BeerRepositoryImpl,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -23,12 +24,12 @@ class MainViewModel @Inject constructor(
             fetchResult.value = LiveDataResult.loading()
 
             val res = loadData(query)
-            when {
-                res.result != null -> {
-                    fetchResult.value = LiveDataResult(LiveDataResultStatus.SUCCESS, res.result)
+            when(res) {
+                is Success<*> -> {
+                    fetchResult.value = LiveDataResult(LiveDataResultStatus.SUCCESS, res.result as? List<BeerModel>)
                 }
-                res.error != null -> {
-                    fetchResult.value = LiveDataResult(LiveDataResultStatus.ERROR, res.result, res.error)
+                is Error -> {
+                    fetchResult.value = LiveDataResult(LiveDataResultStatus.ERROR, listOf(), res.error)
                 }
                 else -> {}
             }
@@ -38,9 +39,9 @@ class MainViewModel @Inject constructor(
 
     private suspend fun loadData(query: String) = withContext(coroutineDispatcher) {
         try {
-            CoroutineResponse.result(beerRepository.searchBeer(query))
+            Success(beerRepositoryImpl.searchBeer(query))
         } catch (e: Exception) {
-            CoroutineResponse.error<List<BeerModel>>(e)
+            Error(e)
         }
     }
 

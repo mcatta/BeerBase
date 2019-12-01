@@ -13,12 +13,13 @@ import javax.inject.Singleton
 @Module
 class RetrofitModule {
 
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(HttpLoggingInterceptor().apply {
-            if (BuildConfig.DEBUG) {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
-        }).build()
+    private val client = OkHttpClient.Builder().apply {
+        if (BuildConfig.DEBUG) {
+            this.addInterceptor(HttpLoggingInterceptor().apply {
+                this.level = HttpLoggingInterceptor.Level.BODY
+            })
+        }
+    }.build()
 
     @Provides
     @Singleton

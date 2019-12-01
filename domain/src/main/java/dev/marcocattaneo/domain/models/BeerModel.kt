@@ -1,4 +1,4 @@
-package dev.marcocattaneo.data.model
+package dev.marcocattaneo.domain.models
 
 import com.google.gson.annotations.SerializedName
 

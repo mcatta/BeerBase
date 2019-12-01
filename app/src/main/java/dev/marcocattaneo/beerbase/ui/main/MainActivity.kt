@@ -15,12 +15,12 @@ import dagger.android.AndroidInjection
 import dev.marcocattaneo.beerbase.R
 import dev.marcocattaneo.beerbase.databinding.ActivityMainBinding
 import dev.marcocattaneo.beerbase.databinding.AdapterListRowBinding
-import dev.marcocattaneo.data.model.BeerModel
 import dev.marcocattaneo.beerbase.ui.BaseActivity
 import dev.marcocattaneo.beerbase.ui.utils.ListDecorator
 import dev.marcocattaneo.beerbase.utils.DaggerViewModelFactory
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
 import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
+import dev.marcocattaneo.domain.models.BeerModel
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
