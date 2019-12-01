@@ -1,15 +1,8 @@
 package dev.marcocattaneo.beerbase.utils
 
-data class LiveDataResult<T>(
-    val status: LiveDataResultStatus,
-    val data: T? = null,
-    val err: Throwable? = null
-) {
-    companion object {
-        fun <T> success(data: T) = LiveDataResult<T>(LiveDataResultStatus.SUCCESS, data)
-
-        fun <T> loading() = LiveDataResult<T>(LiveDataResultStatus.LOADING)
-
-        fun <T> error(err: Throwable) = LiveDataResult<T>(LiveDataResultStatus.ERROR, null, err)
-    }
+sealed class LiveDataResult<T> {
+    data class Success<T>(val result: T): LiveDataResult<T>()
+    data class Error<T>(val err: Throwable): LiveDataResult<T>()
+    class Loading<T>() : LiveDataResult<T>()
 }
+

@@ -19,7 +19,6 @@ import dev.marcocattaneo.beerbase.ui.BaseActivity
 import dev.marcocattaneo.beerbase.ui.utils.ListDecorator
 import dev.marcocattaneo.beerbase.utils.DaggerViewModelFactory
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
-import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
 import dev.marcocattaneo.domain.models.BeerModel
 import javax.inject.Inject
 
@@ -54,17 +53,17 @@ class MainActivity : BaseActivity() {
     }
 
     private val observer = Observer<LiveDataResult<List<BeerModel>>> {
-        when (it.status) {
-            LiveDataResultStatus.LOADING -> {
+        when (it) {
+            is LiveDataResult.Loading -> {
                 binding.swipeToRefresh.isRefreshing = true
             }
-            LiveDataResultStatus.SUCCESS -> {
+            is LiveDataResult.Success -> {
                 binding.swipeToRefresh.isRefreshing = false
-                (binding.list.adapter as BeersAdapter).submitList(it.data)
+                (binding.list.adapter as BeersAdapter).submitList(it.result)
             }
-            LiveDataResultStatus.ERROR -> {
+            is LiveDataResult.Error -> {
                 binding.swipeToRefresh.isRefreshing = false
-                showSnackbar(it.err?.message)
+                showSnackbar(it.err.message)
             }
         }
 

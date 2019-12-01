@@ -8,4 +8,8 @@ abstract class BaseTest {
 
     protected fun Any?.isNotNull(value: Any?) = assertNotNull(value)
 
+    protected fun Any?.isNull(value: Any?) = assertNull(value)
+
+    protected infix fun Any?.isTrue(value: Boolean) = assert(value)
+
 }

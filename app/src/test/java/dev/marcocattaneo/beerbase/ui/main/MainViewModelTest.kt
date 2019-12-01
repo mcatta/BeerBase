@@ -3,7 +3,7 @@ package dev.marcocattaneo.beerbase.ui.main
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import dev.marcocattaneo.beerbase.BaseTest
 import dev.marcocattaneo.beerbase.CoroutinesTestRule
-import dev.marcocattaneo.beerbase.utils.LiveDataResultStatus
+import dev.marcocattaneo.beerbase.utils.LiveDataResult
 import dev.marcocattaneo.data.repository.BeerRepositoryImpl
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -40,12 +40,12 @@ class MainViewModelTest: BaseTest() {
         mainViewModel.fetchResult.observeForever { }
         coEvery { beerRepositoryImpl.searchBeer(any()) } returns listOf()
 
-        isNotNull(mainViewModel.fetchResult.value)
+        isNull(mainViewModel.fetchResult.value)
 
         mainViewModel.searchBeer("beer")
 
         isNotNull(mainViewModel.fetchResult.value)
-        mainViewModel.fetchResult.value?.status?.isEqualTo(LiveDataResultStatus.SUCCESS)
+        assert(mainViewModel.fetchResult.value is LiveDataResult.Success)
     }
 
     @Test
@@ -53,12 +53,12 @@ class MainViewModelTest: BaseTest() {
         mainViewModel.fetchResult.observeForever { }
         coEvery { beerRepositoryImpl.searchBeer(any()) } coAnswers { throw IllegalStateException() }
 
-        isNotNull(mainViewModel.fetchResult.value)
+        isNull(mainViewModel.fetchResult.value)
 
         mainViewModel.searchBeer("beer")
 
         isNotNull(mainViewModel.fetchResult.value)
-        mainViewModel.fetchResult.value?.status isEqualTo LiveDataResultStatus.ERROR
+        assert(mainViewModel.fetchResult.value is LiveDataResult.Error)
     }
 
     @Test
@@ -66,18 +66,18 @@ class MainViewModelTest: BaseTest() {
         mainViewModel.fetchResult.observeForever { }
         coEvery { beerRepositoryImpl.searchBeer(any()) } coAnswers { throw IllegalStateException() }
 
-        isNotNull(mainViewModel.fetchResult.value)
+        isNull(mainViewModel.fetchResult.value)
 
         mainViewModel.searchBeer("beer")
 
         isNotNull(mainViewModel.fetchResult.value)
-        mainViewModel.fetchResult.value?.status isEqualTo LiveDataResultStatus.ERROR
+        assert(mainViewModel.fetchResult.value is LiveDataResult.Error)
 
         coEvery { beerRepositoryImpl.searchBeer(any()) } returns listOf()
 
         mainViewModel.searchBeer("beer")
 
-        mainViewModel.fetchResult.value?.status isEqualTo LiveDataResultStatus.SUCCESS
+        assert(mainViewModel.fetchResult.value is LiveDataResult.Success)
     }
 
 }
