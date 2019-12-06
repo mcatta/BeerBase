@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import dev.marcocattaneo.beerbase.BaseTest
 import dev.marcocattaneo.beerbase.CoroutinesTestRule
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
-import dev.marcocattaneo.data.repository.BeerRepositoryImpl
+import dev.marcocattaneo.data.interactors.SearchBeerUseCase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.RelaxedMockK
@@ -27,18 +27,18 @@ class MainViewModelTest: BaseTest() {
     lateinit var mainViewModel: MainViewModel
 
     @RelaxedMockK
-    lateinit var beerRepositoryImpl: BeerRepositoryImpl
+    lateinit var searchBeerUseCase: SearchBeerUseCase
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        mainViewModel = MainViewModel(beerRepositoryImpl, this.coroutinesTestRule.testDispatcher)
+        mainViewModel = MainViewModel(searchBeerUseCase, this.coroutinesTestRule.testDispatcher)
     }
 
     @Test
     fun testSuccessfullyRequest() = coroutinesTestRule.testDispatcher.runBlockingTest {
         mainViewModel.fetchResult.observeForever { }
-        coEvery { beerRepositoryImpl.searchBeer(any()) } returns listOf()
+        coEvery { searchBeerUseCase.execute(any()) } returns listOf()
 
         isNull(mainViewModel.fetchResult.value)
 
@@ -51,7 +51,7 @@ class MainViewModelTest: BaseTest() {
     @Test
     fun testNegativeRequest() = coroutinesTestRule.testDispatcher.runBlockingTest {
         mainViewModel.fetchResult.observeForever { }
-        coEvery { beerRepositoryImpl.searchBeer(any()) } coAnswers { throw IllegalStateException() }
+        coEvery { searchBeerUseCase.execute(any()) } coAnswers { throw IllegalStateException() }
 
         isNull(mainViewModel.fetchResult.value)
 
@@ -64,7 +64,7 @@ class MainViewModelTest: BaseTest() {
     @Test
     fun testMixedRequest() = coroutinesTestRule.testDispatcher.runBlockingTest {
         mainViewModel.fetchResult.observeForever { }
-        coEvery { beerRepositoryImpl.searchBeer(any()) } coAnswers { throw IllegalStateException() }
+        coEvery { searchBeerUseCase.execute(any()) } coAnswers { throw IllegalStateException() }
 
         isNull(mainViewModel.fetchResult.value)
 
@@ -73,7 +73,7 @@ class MainViewModelTest: BaseTest() {
         isNotNull(mainViewModel.fetchResult.value)
         assert(mainViewModel.fetchResult.value is LiveDataResult.Error)
 
-        coEvery { beerRepositoryImpl.searchBeer(any()) } returns listOf()
+        coEvery { searchBeerUseCase.execute(any()) } returns listOf()
 
         mainViewModel.searchBeer("beer")
 

@@ -5,13 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.marcocattaneo.beerbase.utils.CoroutineResponse
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
-import dev.marcocattaneo.data.repository.BeerRepositoryImpl
+import dev.marcocattaneo.data.interactors.SearchBeerUseCase
 import dev.marcocattaneo.domain.models.BeerModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val beerRepositoryImpl: BeerRepositoryImpl,
+    private val searchBeerUseCase: SearchBeerUseCase,
     private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -37,7 +39,7 @@ class MainViewModel @Inject constructor(
 
     private suspend fun loadData(query: String): CoroutineResponse = withContext(coroutineDispatcher) {
         try {
-            CoroutineResponse.Success(beerRepositoryImpl.searchBeer(query))
+            CoroutineResponse.Success(searchBeerUseCase.execute(query))
         } catch (e: Exception) {
             CoroutineResponse.Error(e)
         }
