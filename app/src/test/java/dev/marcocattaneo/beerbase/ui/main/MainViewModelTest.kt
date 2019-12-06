@@ -3,6 +3,7 @@ package dev.marcocattaneo.beerbase.ui.main
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import dev.marcocattaneo.beerbase.BaseTest
 import dev.marcocattaneo.beerbase.CoroutinesTestRule
+import dev.marcocattaneo.beerbase.mapper.BeerUiMapper
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
 import dev.marcocattaneo.data.interactors.SearchBeerUseCase
 import io.mockk.MockKAnnotations
@@ -32,7 +33,7 @@ class MainViewModelTest: BaseTest() {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        mainViewModel = MainViewModel(searchBeerUseCase, this.coroutinesTestRule.testDispatcher)
+        mainViewModel = MainViewModel(searchBeerUseCase, this.coroutinesTestRule.testDispatcher, BeerUiMapper())
     }
 
     @Test

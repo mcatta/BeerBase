@@ -15,11 +15,11 @@ import dagger.android.AndroidInjection
 import dev.marcocattaneo.beerbase.R
 import dev.marcocattaneo.beerbase.databinding.ActivityMainBinding
 import dev.marcocattaneo.beerbase.databinding.AdapterListRowBinding
+import dev.marcocattaneo.beerbase.model.BeerUiModel
 import dev.marcocattaneo.beerbase.ui.BaseActivity
 import dev.marcocattaneo.beerbase.ui.utils.ListDecorator
 import dev.marcocattaneo.beerbase.utils.DaggerViewModelFactory
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
-import dev.marcocattaneo.domain.models.BeerModel
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -27,13 +27,13 @@ class MainActivity : BaseActivity() {
     @Inject
     lateinit var daggerAndroidViewModelFactory: DaggerViewModelFactory
 
-    private val diffUtil = object : DiffUtil.ItemCallback<BeerModel>() {
-        override fun areItemsTheSame(oldItem: BeerModel, newItem: BeerModel): Boolean {
-            return oldItem.fields.id == newItem.fields.id
+    private val diffUtil = object : DiffUtil.ItemCallback<BeerUiModel>() {
+        override fun areItemsTheSame(oldItem: BeerUiModel, newItem: BeerUiModel): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: BeerModel, newItem: BeerModel): Boolean {
-            return oldItem.fields.id == newItem.fields.id
+        override fun areContentsTheSame(oldItem: BeerUiModel, newItem: BeerUiModel): Boolean {
+            return oldItem.id == newItem.id
         }
 
     }
@@ -52,7 +52,7 @@ class MainActivity : BaseActivity() {
         )
     }
 
-    private val observer = Observer<LiveDataResult<List<BeerModel>>> {
+    private val observer = Observer<LiveDataResult<List<BeerUiModel>>> {
         when (it) {
             is LiveDataResult.Loading -> {
                 binding.swipeToRefresh.isRefreshing = true
@@ -96,8 +96,8 @@ class MainActivity : BaseActivity() {
         binding.swipeToRefresh.setOnRefreshListener { mainViewModel.searchBeer("punk ipa") }
     }
 
-    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerModel>) :
-        ListAdapter<BeerModel, BeersAdapter.ListItemViewHolder>(diffUtilCallback) {
+    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerUiModel>) :
+        ListAdapter<BeerUiModel, BeersAdapter.ListItemViewHolder>(diffUtilCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ListItemViewHolder(
             AdapterListRowBinding.inflate(
@@ -115,7 +115,7 @@ class MainActivity : BaseActivity() {
         }
 
         override fun onBindViewHolder(holder: ListItemViewHolder, position: Int) {
-            holder.bind(getItem(position).fields.name)
+            holder.bind(getItem(position).name)
         }
     }
 }
