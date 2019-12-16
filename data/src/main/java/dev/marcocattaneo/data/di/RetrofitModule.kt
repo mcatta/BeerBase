@@ -24,7 +24,7 @@ class RetrofitModule {
     @Provides
     @Singleton
     fun providesRetrofit() = Retrofit.Builder()
-        .baseUrl("https://data.opendatasoft.com/api/records/1.0/")
+        .baseUrl("https://api.punkapi.com/v2/")
         .addConverterFactory(GsonConverterFactory.create())
         .client(this.client)
         .build()

@@ -9,7 +9,11 @@ class BeerRepositoryImpl @Inject constructor(
 ) : BeerRepository {
 
     override suspend fun searchBeer(query: String): List<BeerModel> {
-        return beerAPIService.search(query).records
+        return beerAPIService.search(query)
+    }
+
+    override suspend fun getBeersByIds(ids: Array<String>): List<BeerModel> {
+        return beerAPIService.getByIds(ids)
     }
 
 }

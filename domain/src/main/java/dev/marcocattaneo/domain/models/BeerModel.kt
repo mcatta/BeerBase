@@ -1,32 +1,31 @@
 package dev.marcocattaneo.domain.models
 
+import Boil_volume
+import Ingredients
+import Method
+import Volume
 import com.google.gson.annotations.SerializedName
 
 data class BeerModel(
-    @SerializedName("datasetid") val datasetid : String,
-    @SerializedName("recordid") val recordid : String,
-    @SerializedName("fields") val fields : Fields,
-    @SerializedName("record_timestamp") val record_timestamp : String
-)
-
-data class Fields(
-    @SerializedName("brewery_id") val brewery_id : Int,
-    @SerializedName("city") val city : String,
-    @SerializedName("name") val name : String,
-    @SerializedName("cat_name") val cat_name : String,
-    @SerializedName("country") val country : String,
-    @SerializedName("cat_id") val cat_id : Int,
-    @SerializedName("upc") val upc : Int,
-    @SerializedName("coordinates") val coordinates : List<Double>,
-    @SerializedName("srm") val srm : Int,
-    @SerializedName("last_mod") val last_mod : String,
-    @SerializedName("state") val state : String,
-    @SerializedName("add_user") val add_user : Int,
-    @SerializedName("abv") val abv : Int,
-    @SerializedName("address1") val address1 : String,
-    @SerializedName("name_breweries") val name_breweries : String,
-    @SerializedName("style_name") val style_name : String,
     @SerializedName("id") val id : Int,
+    @SerializedName("name") val name : String,
+    @SerializedName("tagline") val tagline : String,
+    @SerializedName("first_brewed") val first_brewed : String,
+    @SerializedName("description") val description : String,
+    @SerializedName("image_url") val image_url : String,
+    @SerializedName("abv") val abv : Float,
     @SerializedName("ibu") val ibu : Int,
-    @SerializedName("style_id") val style_id : Int
+    @SerializedName("target_fg") val target_fg : Int,
+    @SerializedName("target_og") val target_og : Int,
+    @SerializedName("ebc") val ebc : Float,
+    @SerializedName("srm") val srm : Float,
+    @SerializedName("ph") val ph : Float,
+    @SerializedName("attenuation_level") val attenuation_level : Float,
+    @SerializedName("volume") val volume : Volume,
+    @SerializedName("boil_volume") val boil_volume : Boil_volume,
+    @SerializedName("method") val method : Method,
+    @SerializedName("ingredients") val ingredients : Ingredients,
+    @SerializedName("food_pairing") val food_pairing : List<String>,
+    @SerializedName("brewers_tips") val brewers_tips : String,
+    @SerializedName("contributed_by") val contributed_by : String
 )
