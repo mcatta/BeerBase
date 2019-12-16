@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
+import com.arlib.floatingsearchview.FloatingSearchView
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.AndroidInjection
 import dev.marcocattaneo.beerbase.R
@@ -75,9 +74,18 @@ class MainActivity : BaseActivity() {
 
         initUI()
 
-        mainViewModel.fetchResult.observe(this, this.observer)
+        this.mainViewModel.fetchResult.observe(this, this.observer)
 
-        mainViewModel.searchBeer("punk ipa")
+        this.binding.floatingSearchView.setOnSearchListener(object: FloatingSearchView.OnSearchListener {
+            override fun onSearchAction(currentQuery: String?) {
+                this@MainActivity.mainViewModel.searchBeer(currentQuery?: "")
+            }
+
+            override fun onSuggestionClicked(searchSuggestion: SearchSuggestion?) {
+
+            }
+
+        })
     }
 
     private fun showSnackbar(message: String?) {
@@ -89,7 +97,7 @@ class MainActivity : BaseActivity() {
     private fun initUI() {
         binding.list.apply {
             layoutManager =
-                LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+                GridLayoutManager(this@MainActivity, 2, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(ListDecorator(resources.getDimensionPixelSize(R.dimen.recycler_view_spacing)))
             adapter = BeersAdapter(diffUtil)
         }

@@ -23,7 +23,17 @@ class ListDecorator(private val spacing: Int) : RecyclerView.ItemDecoration() {
 
         val halfSpacing = spacing / 2
 
-        when (position) {
+        outRect.top = halfSpacing
+        if (position % 2 != 0) {
+            outRect.left = spacing
+            outRect.right = spacing
+        } else {
+            outRect.right = spacing
+            outRect.left = spacing
+        }
+        outRect.bottom = halfSpacing
+
+       /* when (position) {
             0 -> {
                 outRect.top = spacing
                 outRect.bottom = halfSpacing
@@ -38,7 +48,7 @@ class ListDecorator(private val spacing: Int) : RecyclerView.ItemDecoration() {
             }
         }
         outRect.left = spacing
-        outRect.right = spacing
+        outRect.right = spacing*/
     }
 
 }
