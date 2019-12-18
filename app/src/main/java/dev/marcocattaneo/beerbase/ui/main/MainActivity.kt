@@ -11,6 +11,7 @@ import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.AndroidInjection
+import dev.marcocattaneo.beerbase.BR
 import dev.marcocattaneo.beerbase.R
 import dev.marcocattaneo.beerbase.databinding.ActivityMainBinding
 import dev.marcocattaneo.beerbase.databinding.AdapterListRowBinding
@@ -97,11 +98,11 @@ class MainActivity : BaseActivity() {
     private fun initUI() {
         binding.list.apply {
             layoutManager =
-                GridLayoutManager(this@MainActivity, 2, LinearLayoutManager.VERTICAL, false)
+                GridLayoutManager(this@MainActivity, resources.getInteger(R.integer.span_count), LinearLayoutManager.VERTICAL, false)
             addItemDecoration(ListDecorator(resources.getDimensionPixelSize(R.dimen.recycler_view_spacing)))
             adapter = BeersAdapter(diffUtil)
         }
-        binding.swipeToRefresh.setOnRefreshListener { mainViewModel.searchBeer("punk ipa") }
+        binding.swipeToRefresh.setOnRefreshListener { mainViewModel.searchBeer(this.binding.floatingSearchView.query) }
     }
 
     class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerUiModel>) :
@@ -113,17 +114,17 @@ class MainActivity : BaseActivity() {
             )
         )
 
-        inner class ListItemViewHolder(val adapterListRowBinding: AdapterListRowBinding) :
+        inner class ListItemViewHolder(private val adapterListRowBinding: AdapterListRowBinding) :
             RecyclerView.ViewHolder(adapterListRowBinding.root) {
 
-            fun bind(value: String) {
-                this.adapterListRowBinding.title.text = value
+            fun bind(beerUiModel: BeerUiModel) {
+                this.adapterListRowBinding.setVariable(BR.model, beerUiModel)
             }
 
         }
 
         override fun onBindViewHolder(holder: ListItemViewHolder, position: Int) {
-            holder.bind(getItem(position).name)
+            holder.bind(getItem(position))
         }
     }
 }

@@ -8,6 +8,7 @@ import javax.inject.Inject
 class BeerUiMapper @Inject constructor(): Mapper<BeerModel, BeerUiModel> {
     override fun map(t: BeerModel) = BeerUiModel(
         id = t.id,
-        name = t.name
+        name = t.name,
+        beerImage = t.image_url
     )
 }
