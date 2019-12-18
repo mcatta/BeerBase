@@ -96,10 +96,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initUI() {
+        val spanCount = resources.getInteger(R.integer.span_count)
         binding.list.apply {
             layoutManager =
-                GridLayoutManager(this@MainActivity, resources.getInteger(R.integer.span_count), LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(ListDecorator(resources.getDimensionPixelSize(R.dimen.recycler_view_spacing)))
+                GridLayoutManager(this@MainActivity, spanCount, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(ListDecorator(resources.getDimensionPixelSize(R.dimen.recycler_view_spacing), 220, spanCount))
             adapter = BeersAdapter(diffUtil)
         }
         binding.swipeToRefresh.setOnRefreshListener { mainViewModel.searchBeer(this.binding.floatingSearchView.query) }
