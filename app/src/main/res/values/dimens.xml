@@ -2,5 +2,6 @@
 <resources>
     <dimen name="recycler_view_spacing">16dp</dimen>
     <dimen name="standard_margin">16dp</dimen>
+    <dimen name="medium_margin">8dp</dimen>
     <dimen name="small_margin">4dp</dimen>
 </resources>

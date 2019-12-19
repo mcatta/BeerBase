@@ -77,9 +77,10 @@ class MainActivity : BaseActivity() {
 
         this.mainViewModel.fetchResult.observe(this, this.observer)
 
-        this.binding.floatingSearchView.setOnSearchListener(object: FloatingSearchView.OnSearchListener {
+        this.binding.floatingSearchView.setOnSearchListener(object :
+            FloatingSearchView.OnSearchListener {
             override fun onSearchAction(currentQuery: String?) {
-                this@MainActivity.mainViewModel.searchBeer(currentQuery?: "")
+                this@MainActivity.mainViewModel.searchBeer(currentQuery ?: "")
             }
 
             override fun onSuggestionClicked(searchSuggestion: SearchSuggestion?) {
@@ -100,9 +101,28 @@ class MainActivity : BaseActivity() {
         binding.list.apply {
             layoutManager =
                 GridLayoutManager(this@MainActivity, spanCount, LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(ListDecorator(resources.getDimensionPixelSize(R.dimen.recycler_view_spacing), 220, spanCount))
+            addItemDecoration(
+                ListDecorator(
+                    resources.getDimensionPixelSize(R.dimen.recycler_view_spacing),
+                    220,
+                    spanCount
+                )
+            )
             adapter = BeersAdapter(diffUtil)
         }
+
+        binding.list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) {
+                    binding.container.transitionToEnd()
+                } else {
+                    binding.container.transitionToStart()
+                }
+            }
+        })
+
         binding.swipeToRefresh.setOnRefreshListener { mainViewModel.searchBeer(this.binding.floatingSearchView.query) }
     }
 
