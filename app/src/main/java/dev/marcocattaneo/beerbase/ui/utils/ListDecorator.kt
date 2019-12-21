@@ -37,23 +37,6 @@ class ListDecorator(private val spacing: Int, private val spacingTop: Int, priva
             outRect.left = spacing
         }
         outRect.bottom = halfSpacing
-
-       /* when (position) {
-            0 -> {
-                outRect.top = spacing
-                outRect.bottom = halfSpacing
-            }
-            (parent.size - 1) -> {
-                outRect.bottom = halfSpacing
-                outRect.bottom = spacing
-            }
-            else -> {
-                outRect.bottom = spacing
-                outRect.bottom = spacing
-            }
-        }
-        outRect.left = spacing
-        outRect.right = spacing*/
     }
 
 }

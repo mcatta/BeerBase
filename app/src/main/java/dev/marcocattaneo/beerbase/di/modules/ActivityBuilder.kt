@@ -2,6 +2,8 @@ package dev.marcocattaneo.beerbase.di.modules
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import dev.marcocattaneo.beerbase.ui.detail.DetailActivity
+import dev.marcocattaneo.beerbase.ui.detail.di.DetailActivityModule
 
 import dev.marcocattaneo.beerbase.ui.main.MainActivity
 

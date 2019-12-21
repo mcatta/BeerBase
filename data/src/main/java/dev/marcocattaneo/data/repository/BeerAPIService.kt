@@ -10,6 +10,6 @@ interface BeerAPIService {
     suspend fun search(@Query("beer_name") beer: String) : List<BeerModel>
 
     @GET("beers")
-    suspend fun getByIds(@Query("ids") ids: Array<String>) : List<BeerModel>
+    suspend fun getByIds(@Query("ids") ids: Array<Int>) : List<BeerModel>
 
 }
