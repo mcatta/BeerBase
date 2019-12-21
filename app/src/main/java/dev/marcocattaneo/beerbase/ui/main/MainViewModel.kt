@@ -1,5 +1,6 @@
 package dev.marcocattaneo.beerbase.ui.main
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,33 +21,38 @@ class MainViewModel @Inject constructor(
     private val beerUiMapper: BeerUiMapper
 ) : ViewModel() {
 
-    val fetchResult = MutableLiveData<LiveDataResult<List<BeerUiModel>>>()
+    private val _fetchResult = MutableLiveData<LiveDataResult<List<BeerUiModel>>>()
+
+    val fetchResult: LiveData<LiveDataResult<List<BeerUiModel>>>
+        get() = this._fetchResult
 
     fun searchBeer(query: String) {
         viewModelScope.launch {
-            fetchResult.value = LiveDataResult.Loading()
+            _fetchResult.value = LiveDataResult.Loading()
 
-            when(val res = loadData(query)) {
+            when (val res = loadData(query)) {
                 is CoroutineResponse.Success<*> -> {
                     val beers = res.result as List<BeerModel>
 
-                    fetchResult.value = LiveDataResult.Success(beers.map { beerUiMapper.map(it) })
+                    _fetchResult.value = LiveDataResult.Success(beers.map { beerUiMapper.map(it) })
                 }
                 is CoroutineResponse.Error -> {
-                    fetchResult.value = LiveDataResult.Error(res.error)
+                    _fetchResult.value = LiveDataResult.Error(res.error)
                 }
-                else -> {}
+                else -> {
+                }
             }
 
         }
     }
 
-    private suspend fun loadData(query: String): CoroutineResponse = withContext(coroutineDispatcher) {
-        try {
-            CoroutineResponse.Success(searchBeerUseCase.execute(query))
-        } catch (e: Exception) {
-            CoroutineResponse.Error(e)
+    private suspend fun loadData(query: String): CoroutineResponse =
+        withContext(coroutineDispatcher) {
+            try {
+                CoroutineResponse.Success(searchBeerUseCase.execute(query))
+            } catch (e: Exception) {
+                CoroutineResponse.Error(e)
+            }
         }
-    }
 
 }
