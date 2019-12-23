@@ -30,10 +30,10 @@ class ListDecorator(private val spacing: Int, private val spacingTop: Int, priva
         }
 
         if (position % colspan != 0) {
-            outRect.left = spacing
+            outRect.left = halfSpacing
             outRect.right = spacing
         } else {
-            outRect.right = spacing
+            outRect.right = halfSpacing
             outRect.left = spacing
         }
         outRect.bottom = halfSpacing

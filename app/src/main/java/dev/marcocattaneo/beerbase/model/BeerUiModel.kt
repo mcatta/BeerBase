@@ -3,8 +3,9 @@ package dev.marcocattaneo.beerbase.model
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import java.io.Serializable
 
-data class BeerUiModel(val id: Int, val name: String, val beerImage: String?) {
+data class BeerUiModel(val id: Int, val name: String, val beerImage: String?): Serializable {
 
     companion object {
         @BindingAdapter("beerImage")

@@ -6,6 +6,7 @@
 
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/container"
+        android:background="@color/cream"
         app:layoutDescription="@xml/collapsing_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

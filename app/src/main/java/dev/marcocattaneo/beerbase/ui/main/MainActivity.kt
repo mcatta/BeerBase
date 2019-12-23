@@ -1,5 +1,6 @@
 package dev.marcocattaneo.beerbase.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import dev.marcocattaneo.beerbase.databinding.ActivityMainBinding
 import dev.marcocattaneo.beerbase.databinding.AdapterListRowBinding
 import dev.marcocattaneo.beerbase.model.BeerUiModel
 import dev.marcocattaneo.beerbase.ui.BaseActivity
+import dev.marcocattaneo.beerbase.ui.detail.DetailActivity
 import dev.marcocattaneo.beerbase.ui.utils.ListDecorator
 import dev.marcocattaneo.beerbase.utils.DaggerViewModelFactory
 import dev.marcocattaneo.beerbase.utils.LiveDataResult
@@ -70,6 +72,15 @@ class MainActivity : BaseActivity() {
 
     }
 
+    private val adapterDelegate = object: AdapterDelegate {
+        override fun onClick(beerUiModel: BeerUiModel) {
+            val intent = Intent(this@MainActivity, DetailActivity::class.java)
+            intent.putExtra(DetailActivity.ARG_BEER, beerUiModel)
+            startActivity(intent)
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
@@ -109,7 +120,7 @@ class MainActivity : BaseActivity() {
                     spanCount
                 )
             )
-            adapter = BeersAdapter(diffUtil)
+            adapter = BeersAdapter(diffUtil, adapterDelegate)
         }
 
         binding.list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -127,7 +138,7 @@ class MainActivity : BaseActivity() {
         binding.swipeToRefresh.setOnRefreshListener { mainViewModel.searchBeer(this.binding.floatingSearchView.query) }
     }
 
-    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerUiModel>) :
+    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerUiModel>, private val delegate: AdapterDelegate) :
         ListAdapter<BeerUiModel, BeersAdapter.ListItemViewHolder>(diffUtilCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ListItemViewHolder(
@@ -141,6 +152,10 @@ class MainActivity : BaseActivity() {
 
             fun bind(beerUiModel: BeerUiModel) {
                 this.adapterListRowBinding.setVariable(BR.model, beerUiModel)
+                // Handle click event
+                this.adapterListRowBinding.card.setOnClickListener {
+                    delegate.onClick(beerUiModel)
+                }
             }
 
         }
@@ -148,5 +163,9 @@ class MainActivity : BaseActivity() {
         override fun onBindViewHolder(holder: ListItemViewHolder, position: Int) {
             holder.bind(getItem(position))
         }
+    }
+
+    interface AdapterDelegate {
+        fun onClick(beerUiModel: BeerUiModel)
     }
 }

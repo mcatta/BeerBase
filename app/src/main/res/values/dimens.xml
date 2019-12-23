@@ -4,4 +4,6 @@
     <dimen name="standard_margin">16dp</dimen>
     <dimen name="medium_margin">8dp</dimen>
     <dimen name="small_margin">4dp</dimen>
+    <dimen name="font_size_h1">17sp</dimen>
+    <dimen name="font_size_list_item">13sp</dimen>
 </resources>
