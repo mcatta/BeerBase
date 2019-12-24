@@ -35,6 +35,7 @@
                 android:padding="@dimen/small_margin">
 
                 <ImageView
+                    android:id="@+id/beerImage"
                     tools:src="@tools:sample/avatars"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"

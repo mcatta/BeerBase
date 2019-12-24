@@ -16,9 +16,12 @@
     <style name="AppTheme.H1" parent="AppTheme.BaseText">
         <item name="android:textSize">@dimen/font_size_h1</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textAlignment">center</item>
         <item name="android:paddingTop">@dimen/standard_margin</item>
         <item name="android:paddingBottom">@dimen/standard_margin</item>
+    </style>
+
+    <style name="AppTheme.Body" parent="AppTheme.BaseText">
+        <item name="android:textSize">@dimen/font_size_body</item>
     </style>
 
     <style name="AppTheme.ListItem" parent="AppTheme.BaseText">
@@ -27,4 +30,5 @@
         <item name="android:textSize">@dimen/font_size_list_item</item>
     </style>
 
+    <dimen name="font_size_body">14dp</dimen>
 </resources>

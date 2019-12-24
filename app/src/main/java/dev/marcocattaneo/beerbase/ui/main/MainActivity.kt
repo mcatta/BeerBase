@@ -3,11 +3,14 @@ package dev.marcocattaneo.beerbase.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.*
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
@@ -72,11 +75,22 @@ class MainActivity : BaseActivity() {
 
     }
 
-    private val adapterDelegate = object: AdapterDelegate {
-        override fun onClick(beerUiModel: BeerUiModel) {
+    private val adapterDelegate = object : AdapterDelegate {
+        override fun onClick(beerUiModel: BeerUiModel, binding: AdapterListRowBinding) {
+
             val intent = Intent(this@MainActivity, DetailActivity::class.java)
             intent.putExtra(DetailActivity.ARG_BEER, beerUiModel)
-            startActivity(intent)
+
+            val activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this@MainActivity,
+                Pair.create(
+                    binding.beerImage,
+                    DetailActivity.ARG_VIEW_NAME_HEADER_IMAGE
+                )
+            )
+
+            // Now we can start the Activity, providing the activity options as a bundle
+            ActivityCompat.startActivity(this@MainActivity, intent, activityOptions.toBundle());
         }
 
     }
@@ -138,7 +152,10 @@ class MainActivity : BaseActivity() {
         binding.swipeToRefresh.setOnRefreshListener { mainViewModel.searchBeer(this.binding.floatingSearchView.query) }
     }
 
-    class BeersAdapter(diffUtilCallback: DiffUtil.ItemCallback<BeerUiModel>, private val delegate: AdapterDelegate) :
+    class BeersAdapter(
+        diffUtilCallback: DiffUtil.ItemCallback<BeerUiModel>,
+        private val delegate: AdapterDelegate
+    ) :
         ListAdapter<BeerUiModel, BeersAdapter.ListItemViewHolder>(diffUtilCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ListItemViewHolder(
@@ -154,7 +171,7 @@ class MainActivity : BaseActivity() {
                 this.adapterListRowBinding.setVariable(BR.model, beerUiModel)
                 // Handle click event
                 this.adapterListRowBinding.card.setOnClickListener {
-                    delegate.onClick(beerUiModel)
+                    delegate.onClick(beerUiModel, adapterListRowBinding)
                 }
             }
 
@@ -166,6 +183,6 @@ class MainActivity : BaseActivity() {
     }
 
     interface AdapterDelegate {
-        fun onClick(beerUiModel: BeerUiModel)
+        fun onClick(beerUiModel: BeerUiModel, binding: AdapterListRowBinding)
     }
 }
