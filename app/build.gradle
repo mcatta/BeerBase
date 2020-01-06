@@ -72,5 +72,6 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.10.0'
 
     implementation 'androidx.palette:palette:1.0.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0-beta01'
 
 }
